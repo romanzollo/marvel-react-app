@@ -8,13 +8,6 @@ import mjolnir from '../../resources/img/mjolnir.png';
 import './randomChar.scss';
 
 class RandomChar extends Component {
-    constructor(props) {
-        super(props);
-        // вызов методов которые обращаются к серверу в конструкторе ПЛОХАЯ практика!!!
-        // решение пока временное
-        this.updateChar();
-    }
-
     state = {
         char: {},
         loading: true,
@@ -29,18 +22,27 @@ class RandomChar extends Component {
 
     onError = () => {
         this.setState({
-            error: true,
+            error: !this.state.error,
             loading: false,
         });
     };
 
     updateChar = () => {
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
+        this.setState({ loading: true });
         this.marvelService
             .getCharacter(id)
             .then(this.onCharLoaded)
             .catch(this.onError);
     };
+
+    componentDidMount() {
+        this.updateChar();
+    }
+
+    // componentWillUnmount() {
+
+    // }
 
     render() {
         const { char, loading, error } = this.state;
@@ -63,7 +65,10 @@ class RandomChar extends Component {
                         Do you want to get to know him better?
                     </p>
                     <p className="randomchar__title">Or choose another one</p>
-                    <button className="button button__main">
+                    <button
+                        className="button button__main"
+                        onClick={this.updateChar}
+                    >
                         <div className="inner">try it</div>
                     </button>
                     <img
@@ -81,6 +86,13 @@ class RandomChar extends Component {
 // который отвечает за отображение случайного персонажа
 const View = ({ char }) => {
     const { name, description, thumbnail, homepage, wiki } = char;
+    let imgStyle = { objectFit: 'cover' };
+    if (
+        thumbnail ===
+        'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg'
+    ) {
+        imgStyle = { objectFit: 'contain' };
+    }
 
     return (
         <div className="randomchar__block">
@@ -88,6 +100,7 @@ const View = ({ char }) => {
                 src={thumbnail}
                 alt="Random character"
                 className="randomchar__img"
+                style={imgStyle}
             />
             <div className="randomchar__info">
                 <p className="randomchar__name">{name}</p>
