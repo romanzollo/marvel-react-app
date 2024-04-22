@@ -29,11 +29,15 @@ class CharList extends Component {
     };
 
     componentDidMount() {
+        this.onRequest();
+    }
+
+    onRequest = (offset) => {
         this.marvelService
-            .getAllCharacters()
+            .getAllCharacters(offset)
             .then(this.onCharListLoaded)
             .catch(this.onError);
-    }
+    };
 
     // Этот метод создан для оптимизации,
     // чтобы не помещать такую конструкцию в метод render
