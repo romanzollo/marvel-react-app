@@ -61,10 +61,27 @@ class CharList extends Component {
             .catch(this.onError);
     };
 
+    // создаем массив с ссылками на DOM-элементы (рефы)
+    refItems = [];
+
+    // добавляем ссылку на DOM-элемент в массив через рефы
+    setRef = (ref) => {
+        this.refItems.push(ref);
+    };
+
+    // фокус на выбранный элемент и подсвечиваем его
+    focusOnItem = (id) => {
+        this.refItems.forEach((item) =>
+            item.classList.remove('char__item_selected')
+        );
+        this.refItems[id].classList.add('char__item_selected');
+        this.refItems[id].focus();
+    };
+
     // Этот метод создан для оптимизации,
     // чтобы не помещать такую конструкцию в метод render
     renderItems(arr) {
-        const items = arr.map((item) => {
+        const items = arr.map((item, i) => {
             let imgStyle = { objectFit: 'cover' };
             if (
                 item.thumbnail ===
@@ -77,7 +94,21 @@ class CharList extends Component {
                 <li
                     className="char__item"
                     key={item.id}
-                    onClick={() => this.props.onCharSelected(item.id)}
+                    ref={this.setRef}
+                    onClick={() => {
+                        this.props.onCharSelected(item.id);
+                        this.focusOnItem(i);
+                    }}
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                        if (e.key === ' ' || e.key === 'Enter') {
+                            // предотвращаем прокрутку вниз при нажатии на Space
+                            e.preventDefault();
+
+                            this.props.onCharSelected(item.id);
+                            this.focusOnItem(i);
+                        }
+                    }}
                 >
                     <img
                         src={item.thumbnail}
@@ -121,6 +152,7 @@ class CharList extends Component {
     }
 }
 
+// использование PropTypes для определения типов пропсов
 CharList.propTypes = {
     onCharSelected: PropTypes.func.isRequired,
 };
