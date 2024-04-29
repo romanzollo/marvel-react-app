@@ -7,7 +7,7 @@ import MarvelService from '../../services/MarvelService';
 
 import './charList.scss';
 
-const CharList = (props) => {
+const CharList = ({ onCharSelected }) => {
     const [charList, setCharList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
@@ -92,7 +92,7 @@ const CharList = (props) => {
                     // сохраняем ссылку на DOM-элемент в массив через рефы
                     ref={(ref) => (refItems.current[i] = ref)}
                     onClick={() => {
-                        props.onCharSelected(item.id);
+                        onCharSelected(item.id);
                         focusOnItem(i);
                     }}
                     tabIndex={0}
@@ -101,7 +101,7 @@ const CharList = (props) => {
                             // предотвращаем прокрутку вниз при нажатии на Space
                             e.preventDefault();
 
-                            props.onCharSelected(item.id);
+                            onCharSelected(item.id);
                             focusOnItem(i);
                         }
                     }}
