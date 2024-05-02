@@ -3,23 +3,17 @@ import PropTypes from 'prop-types';
 
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 
 import './charList.scss';
 
 const CharList = ({ onCharSelected }) => {
     const [charList, setCharList] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
     const [newItemLoading, setNewItemLoading] = useState(false);
     const [offset, setOffset] = useState(210);
     const [charEnded, setCharEnded] = useState(false);
 
-    const marvelService = new MarvelService();
-
-    const onCharListLoading = () => {
-        setNewItemLoading(true);
-    };
+    const { loading, error, getAllCharacters } = useMarvelService();
 
     const onCharListLoaded = (newCharList) => {
         // проверка наличия следующих 9 элементов
@@ -28,37 +22,20 @@ const CharList = ({ onCharSelected }) => {
             ended = true;
         }
 
-        // this.setState(({ charList, offset }) => ({
-        //     charList: [...charList, ...newCharList],
-        //     loading: false,
-        //     newItemLoading: false,
-        //     offset: offset + 9,
-        //     charEnded: ended,
-        // }));
-
         setCharList((charList) => [...charList, ...newCharList]);
-        setLoading((loading) => false);
         setNewItemLoading((newItemLoading) => false);
         setOffset((offset) => offset + 9);
         setCharEnded((charEnded) => ended);
     };
 
-    const onError = () => {
-        setError((error) => !error);
-        setLoading((loading) => false);
-    };
-
     useEffect(() => {
-        onRequest();
+        onRequest(offset, true);
     }, []);
 
-    const onRequest = (offset) => {
-        onCharListLoading();
+    const onRequest = (offset, initial) => {
+        initial ? setNewItemLoading(false) : setNewItemLoading(true);
 
-        marvelService
-            .getAllCharacters(offset)
-            .then(onCharListLoaded)
-            .catch(onError);
+        getAllCharacters(offset).then(onCharListLoaded);
     };
 
     // создаем массив с ссылками на DOM-элементы (рефы)
@@ -120,17 +97,16 @@ const CharList = ({ onCharSelected }) => {
         return <ul className="char__grid">{items}</ul>;
     }
 
+    const items = renderItems(charList);
+
     const errorMessage = error ? <ErrorMessage /> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const content = !(loading || error || !charList)
-        ? renderItems(charList)
-        : null;
+    const spinner = loading && !newItemLoading ? <Spinner /> : null;
 
     return (
         <div className="char__list">
             {errorMessage}
             {spinner}
-            {content}
+            {items}
             <button
                 className="button button__main button__long"
                 style={{ display: charEnded ? 'none' : 'block' }}
