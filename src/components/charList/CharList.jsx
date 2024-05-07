@@ -50,8 +50,6 @@ const CharList = ({ onCharSelected }) => {
         refItems.current[id].focus();
     };
 
-    console.log('render');
-
     // Этот метод создан для оптимизации,
     // чтобы не помещать такую конструкцию в метод render
     function renderItems(arr) {

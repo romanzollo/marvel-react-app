@@ -14,10 +14,12 @@ const AppHeader = () => {
                 <ul>
                     <li>
                         <NavLink
-                            // exact для подсвечивания только активной ссылки
-                            exact
+                            // end для подсвечивания только при строгом сравнении пути
+                            end
                             to="/"
-                            activeStyle={{ color: '#9F0013' }}
+                            style={({ isActive }) => ({
+                                color: isActive ? '#9F0013' : 'inherit',
+                            })}
                         >
                             Characters
                         </NavLink>
@@ -25,10 +27,10 @@ const AppHeader = () => {
                     /
                     <li>
                         <NavLink
-                            // exact для подсвечивания только активной ссылки
-                            exact
                             to="/comics"
-                            activeStyle={{ color: '#9F0013' }}
+                            style={({ isActive }) => ({
+                                color: isActive ? '#9F0013' : 'inherit',
+                            })}
                         >
                             Comics
                         </NavLink>
