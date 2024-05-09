@@ -11,7 +11,7 @@ const App = () => {
                 <main>
                     <Routes>
                         <Route path="/" element={<MainPage />} />
-                        <Route path="/comics" element={<ComicsPage />}></Route>
+                        <Route path="/comics" element={<ComicsPage />} />
                         <Route
                             // comicId это слаг который мы сами придумываем и позже вытащим из адресной строки через useParams в SingleComicPage
                             path="comics/:comicId"
