@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
@@ -63,38 +64,48 @@ const CharList = ({ onCharSelected }) => {
             }
 
             return (
-                <li
-                    className="char__item"
+                <CSSTransition
                     key={item.id}
-                    // сохраняем ссылку на DOM-элемент в массив через рефы
-                    ref={(ref) => (refItems.current[i] = ref)}
-                    onClick={() => {
-                        onCharSelected(item.id);
-                        focusOnItem(i);
-                    }}
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                        if (e.key === ' ' || e.key === 'Enter') {
-                            // предотвращаем прокрутку вниз при нажатии на Space
-                            e.preventDefault();
-
+                    timeout={500}
+                    classNames="char__item"
+                >
+                    <li
+                        className="char__item"
+                        // сохраняем ссылку на DOM-элемент в массив через рефы
+                        ref={(ref) => (refItems.current[i] = ref)}
+                        onClick={() => {
                             onCharSelected(item.id);
                             focusOnItem(i);
-                        }
-                    }}
-                >
-                    <img
-                        src={item.thumbnail}
-                        alt={item.name}
-                        style={imgStyle}
-                    />
-                    <div className="char__name">{item.name}</div>
-                </li>
+                        }}
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                            if (e.key === ' ' || e.key === 'Enter') {
+                                // предотвращаем прокрутку вниз при нажатии на Space
+                                e.preventDefault();
+
+                                onCharSelected(item.id);
+                                focusOnItem(i);
+                            }
+                        }}
+                    >
+                        <img
+                            src={item.thumbnail}
+                            alt={item.name}
+                            style={imgStyle}
+                        />
+                        <div className="char__name">{item.name}</div>
+                    </li>
+                </CSSTransition>
             );
         });
 
         // А эта конструкция вынесена для центровки спиннера/ошибки
-        return <ul className="char__grid">{items}</ul>;
+        return (
+            <ul className="char__grid">
+                {/* component={null} -> to avoid a wrapping <div> */}
+                <TransitionGroup component={null}>{items}</TransitionGroup>
+            </ul>
+        );
     }
 
     const items = renderItems(charList);
