@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
@@ -40,21 +41,32 @@ const ComicsList = () => {
     function renderItems(arr) {
         const items = arr.map((item, i) => {
             return (
-                <li className="comics__item" key={i}>
-                    <Link to={`/comics/${item.id}`}>
-                        <img
-                            src={item.thumbnail}
-                            alt={item.title}
-                            className="comics__item-img"
-                        />
-                        <div className="comics__item-name">{item.title}</div>
-                        <div className="comics__item-price">{item.price}</div>
-                    </Link>
-                </li>
+                <CSSTransition classNames="comics__item" key={i} timeout={500}>
+                    <li className="comics__item">
+                        <Link to={`/comics/${item.id}`}>
+                            <img
+                                src={item.thumbnail}
+                                alt={item.title}
+                                className="comics__item-img"
+                            />
+                            <div className="comics__item-name">
+                                {item.title}
+                            </div>
+                            <div className="comics__item-price">
+                                {item.price}
+                            </div>
+                        </Link>
+                    </li>
+                </CSSTransition>
             );
         });
 
-        return <ul className="comics__grid">{items}</ul>;
+        return (
+            <ul className="comics__grid">
+                {/* component={null} -> to avoid a wrapping <div> */}
+                <TransitionGroup component={null}>{items}</TransitionGroup>
+            </ul>
+        );
     }
 
     const items = renderItems(comicsList);
