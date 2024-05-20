@@ -15,6 +15,7 @@ import './charSearchForm.scss';
 
 const CharSearchForm = () => {
     const [char, setChar] = useState(null);
+    const [value, setValue] = useState('');
     const { loading, error, getCharacterByName, clearError } =
         useMarvelService();
 
@@ -45,17 +46,17 @@ const CharSearchForm = () => {
                 <div className="inner">To page</div>
             </Link>
         </div>
-    ) : (
+    ) : value ? (
         <div className="char__search-error">
             The character was not found. Check the name and try again
         </div>
-    );
+    ) : null;
 
     return (
         <div className="char__search-form">
             <Formik
                 initialValues={{
-                    charName: '',
+                    charName: value,
                 }}
                 validationSchema={Yup.object({
                     charName: Yup.string().required('This field is required'),
@@ -64,7 +65,7 @@ const CharSearchForm = () => {
                     updateChar(charName);
                 }}
             >
-                <Form>
+                <Form onChange={({ target }) => setValue(target.value)}>
                     <label className="char__search-label" htmlFor="charName">
                         Or find a character by name:
                     </label>
