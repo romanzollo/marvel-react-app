@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import Spinner from '../spinner/Spinner';
@@ -80,10 +81,13 @@ const View = ({ char }) => {
                     ? null
                     : 'There is no comics with this character'}
                 {comics.slice(0, 10).map((item, i) => {
+                    // обрезаем ссылку с конца и до первого слеша
+                    let id = item.resourceURI.split('/').pop();
+
                     return (
                         <li key={i} className="char__comics-item">
+                            <Link to={`/comics/${id}`}>{item.name}</Link>
                             {/* <a href={item.resourceURI}>{item.name}</a> */}
-                            {item.name}
                         </li>
                     );
                 })}
