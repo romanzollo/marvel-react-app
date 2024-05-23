@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
 
 export const useHttp = () => {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    // finite state machine
+    const [process, setProcess] = useState('waiting');
 
     const request = useCallback(
         async (
@@ -11,7 +11,8 @@ export const useHttp = () => {
             body = null,
             headers = { 'Content-Type': 'application/json' }
         ) => {
-            setLoading(true);
+            // finite state machine
+            setProcess('loading');
 
             try {
                 const response = await fetch(url, { method, body, headers });
@@ -23,24 +24,25 @@ export const useHttp = () => {
                 }
 
                 const data = await response.json();
-
-                setLoading(false);
                 return data;
             } catch (error) {
-                setLoading(false);
-                setError(error.message);
+                // finite state machine
+                setProcess('error');
                 throw error;
             }
         },
         []
     );
 
-    const clearError = () => setError(null);
+    const clearError = useCallback(() => {
+        // finite state machine
+        setProcess('loading');
+    }, []);
 
     return {
-        loading,
-        error,
         request,
         clearError,
+        process,
+        setProcess,
     };
 };

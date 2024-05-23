@@ -17,7 +17,7 @@ const CharSearchForm = () => {
     const [char, setChar] = useState(null);
     const [value, setValue] = useState('');
 
-    const { loading, error, getCharacterByName, clearError } =
+    const { getCharacterByName, clearError, process, setProcess } =
         useMarvelService();
 
     const onCharLoaded = (char) => {
@@ -27,14 +27,18 @@ const CharSearchForm = () => {
     const updateChar = (name) => {
         clearError();
 
-        getCharacterByName(name).then(onCharLoaded);
+        getCharacterByName(name)
+            .then(onCharLoaded)
+            // finite state machine
+            .then(() => setProcess('confirmed'));
     };
 
-    const errorMessage = error ? (
-        <div className="char__search-critical-error">
-            <ErrorMessage />
-        </div>
-    ) : null;
+    const errorMessage =
+        process === 'error' ? (
+            <div className="char__search-critical-error">
+                <ErrorMessage />
+            </div>
+        ) : null;
     const result = !char ? null : char.length > 0 ? (
         <div className="char__search-wrapper">
             <div className="char__search-success">
@@ -80,7 +84,7 @@ const CharSearchForm = () => {
                         <button
                             type="submit"
                             className="button button__main"
-                            disabled={loading}
+                            disabled={process === 'loading'}
                         >
                             <div className="inner">find</div>
                         </button>

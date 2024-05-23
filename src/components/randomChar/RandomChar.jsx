@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import Spinner from '../spinner/Spinner';
-import ErrorMessage from '../errorMessage/ErrorMessage';
+
 import useMarvelService from '../../services/MarvelService';
+import setContent from '../../utils/setContent';
 
 import mjolnir from '../../resources/img/mjolnir.png';
 
@@ -10,9 +10,11 @@ import './randomChar.scss';
 const RandomChar = () => {
     const [char, setChar] = useState({});
 
-    const { loading, error, getCharacter, clearError } = useMarvelService();
+    const { getCharacter, clearError, process, setProcess } =
+        useMarvelService();
 
     const onCharLoaded = (char) => {
+        // eslint-disable-next-line
         setChar(char);
     };
 
@@ -21,7 +23,10 @@ const RandomChar = () => {
 
         // для сброса ошибок перед запросом
         clearError();
-        getCharacter(id).then(onCharLoaded);
+        getCharacter(id)
+            .then(onCharLoaded)
+            // finite state machine
+            .then(() => setProcess('confirmed'));
     };
 
     useEffect(() => {
@@ -35,15 +40,12 @@ const RandomChar = () => {
         };
     }, []);
 
-    const errorMessage = error ? <ErrorMessage /> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const content = !(loading || error || !char) ? <View char={char} /> : null;
-
     return (
         <div className="randomchar">
-            {spinner}
-            {errorMessage}
-            {content}
+            {
+                // finite state machine
+                setContent(process, View, char)
+            }
             <div className="randomchar__static">
                 <p className="randomchar__title">
                     Random character for today!
@@ -66,8 +68,8 @@ const RandomChar = () => {
 
 // разделил компонент RandomChar на подкомпонент View
 // который отвечает за отображение случайного персонажа
-const View = ({ char }) => {
-    const { name, description, thumbnail, homepage, wiki } = char;
+const View = ({ data }) => {
+    const { name, description, thumbnail, homepage, wiki } = data;
     let imgStyle = { objectFit: 'cover' };
     if (
         thumbnail ===
