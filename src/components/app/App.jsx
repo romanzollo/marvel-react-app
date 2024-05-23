@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import Spinner from '../spinner/Spinner';
 import AppHeader from '../appHeader/AppHeader';
+import ScrollToTop from '../scrollToTop/ScrollToTop';
 
 // динамический импорт (lazy) обязательно после всех статических импортов
 const MainPage = lazy(() => import('../pages/MainPage'));
@@ -50,6 +51,7 @@ const App = () => {
                         </Routes>
                     </Suspense>
                 </main>
+                <ScrollToTop />
             </div>
         </Router>
     );
