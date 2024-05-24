@@ -1,9 +1,7 @@
-import { useState, useEffect, useRef, memo } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
-import Spinner from '../spinner/Spinner';
-import ErrorMessage from '../errorMessage/ErrorMessage';
 import useMarvelService from '../../services/MarvelService';
 import setContentList from '../../utils/setContentList';
 
@@ -15,8 +13,7 @@ const CharList = ({ onCharSelected }) => {
     const [offset, setOffset] = useState(210);
     const [charEnded, setCharEnded] = useState(false);
 
-    const { loading, error, getAllCharacters, process, setProcess } =
-        useMarvelService();
+    const { getAllCharacters, process, setProcess } = useMarvelService();
 
     const onCharListLoaded = (newCharList) => {
         // проверка наличия следующих 9 элементов
@@ -113,16 +110,20 @@ const CharList = ({ onCharSelected }) => {
         );
     }
 
+    // useMemo - для того чтобы не перерисовывать компонент
+    // без измениния process и работал focusOnItem (подсветка активного элемента)
+    const elements = useMemo(() => {
+        return setContentList(
+            process,
+            () => renderItems(charList),
+            newItemLoading
+        );
+        // setContentList - finite state machine
+    }, [process]);
+
     return (
         <div className="char__list">
-            {
-                // finite state machine
-                setContentList(
-                    process,
-                    () => renderItems(charList),
-                    newItemLoading
-                )
-            }
+            {elements}
             <button
                 className="button button__main button__long"
                 style={{ display: charEnded ? 'none' : 'block' }}
