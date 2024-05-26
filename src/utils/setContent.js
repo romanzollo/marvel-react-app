@@ -3,14 +3,14 @@ import Spinner from '../components/spinner/Spinner';
 import ErrorMessage from '../components/errorMessage/ErrorMessage';
 
 // finite state machine
-const setContent = (process, Component, data) => {
+const setContent = (process, Component, data, method) => {
     switch (process) {
         case 'waiting':
             return <Skeleton />;
         case 'loading':
             return <Spinner />;
         case 'confirmed':
-            return <Component data={data} />;
+            return <Component data={data} method={method} />;
         case 'error':
             return <ErrorMessage />;
         default:

@@ -10,7 +10,7 @@ import './charList.scss';
 const CharList = ({ onCharSelected }) => {
     const [charList, setCharList] = useState([]);
     const [newItemLoading, setNewItemLoading] = useState(false);
-    const [offset, setOffset] = useState(210);
+    const [offset, setOffset] = useState(1);
     const [charEnded, setCharEnded] = useState(false);
 
     const { getAllCharacters, process, setProcess } = useMarvelService();
@@ -30,6 +30,7 @@ const CharList = ({ onCharSelected }) => {
 
     useEffect(() => {
         onRequest(offset, true);
+        // eslint-disable-next-line
     }, []);
 
     const onRequest = (offset, initial) => {
@@ -51,6 +52,14 @@ const CharList = ({ onCharSelected }) => {
         );
         refItems.current[id].classList.add('char__item_selected');
         refItems.current[id].focus();
+    };
+
+    // для скрола вверх при нажатии на Enter или Space
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 400,
+            behavior: 'smooth',
+        });
     };
 
     // Этот метод создан для оптимизации,
@@ -87,6 +96,7 @@ const CharList = ({ onCharSelected }) => {
 
                                 onCharSelected(item.id);
                                 focusOnItem(i);
+                                scrollToTop();
                             }
                         }}
                     >
@@ -113,12 +123,13 @@ const CharList = ({ onCharSelected }) => {
     // useMemo - для того чтобы не перерисовывать компонент
     // без измениния process и работал focusOnItem (подсветка активного элемента)
     const elements = useMemo(() => {
+        // setContentList - finite state machine
         return setContentList(
             process,
             () => renderItems(charList),
             newItemLoading
         );
-        // setContentList - finite state machine
+        // eslint-disable-next-line
     }, [process]);
 
     return (

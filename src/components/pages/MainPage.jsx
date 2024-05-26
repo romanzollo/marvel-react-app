@@ -23,7 +23,7 @@ const MainPage = () => {
                 <title>Marvel information portal</title>
             </Helmet>
             <ErrorBoundary>
-                <RandomChar />
+                <RandomChar onCharSelected={onCharSelected} />
             </ErrorBoundary>
             <div className="char__content">
                 <ErrorBoundary>

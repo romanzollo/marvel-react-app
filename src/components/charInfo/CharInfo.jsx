@@ -11,8 +11,8 @@ const CharInfo = ({ charId }) => {
     const [char, setChar] = useState(null);
 
     useEffect(() => {
-        // eslint-disable-next-line
         updateChar();
+        // eslint-disable-next-line
     }, [charId]);
 
     const { getCharacter, clearError, process, setProcess } =

@@ -7,7 +7,7 @@ import mjolnir from '../../resources/img/mjolnir.png';
 
 import './randomChar.scss';
 
-const RandomChar = () => {
+const RandomChar = ({ onCharSelected }) => {
     const [char, setChar] = useState({});
 
     const { getCharacter, clearError, process, setProcess } =
@@ -38,13 +38,15 @@ const RandomChar = () => {
         return () => {
             clearInterval(timerId);
         };
+
+        // eslint-disable-next-line
     }, []);
 
     return (
         <div className="randomchar">
             {
                 // finite state machine
-                setContent(process, View, char)
+                setContent(process, View, char, onCharSelected)
             }
             <div className="randomchar__static">
                 <p className="randomchar__title">
@@ -68,8 +70,8 @@ const RandomChar = () => {
 
 // разделил компонент RandomChar на подкомпонент View
 // который отвечает за отображение случайного персонажа
-const View = ({ data }) => {
-    const { name, description, thumbnail, homepage, wiki } = data;
+const View = ({ data, method }) => {
+    const { id, name, description, thumbnail, homepage, wiki } = data;
     let imgStyle = { objectFit: 'cover' };
     if (
         thumbnail ===
@@ -85,6 +87,7 @@ const View = ({ data }) => {
                 alt="Random character"
                 className="randomchar__img"
                 style={imgStyle}
+                onClick={() => method(id)}
             />
             <div className="randomchar__info">
                 <p className="randomchar__name">{name}</p>
