@@ -1,6 +1,5 @@
 {
     "name": "marvel-react-app",
-    "homepage": "https://romanzollo.github.io/marvel-react-app",
     "version": "0.1.0",
     "private": true,
     "dependencies": {
