@@ -16,8 +16,8 @@ const SinglePage = ({ Component, dataType }) => {
         useMarvelService();
 
     useEffect(() => {
-        // eslint-disable-next-line
         updateData();
+        // eslint-disable-next-line
     }, [id]);
 
     const updateData = () => {
